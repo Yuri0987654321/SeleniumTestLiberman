@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.util.Collection;
 
+import static com.codeborne.selenide.Condition.name;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -162,9 +163,8 @@ public class TestNewtoursDemoaut {
         $(By.name("billState")).setValue("NewMexico");
         $(By.name("billZip")).setValue("94089");
         $(By.name("billCountry")).selectOptionContainingText("UNITED STATES");
-        $(By.name("ticketLess")).doubleClick();
-
-         Thread.sleep(5000);
+        $(By.linkText("Same as Billing Address")).find("append").click();
+                Thread.sleep(5000);
 
     }
 
