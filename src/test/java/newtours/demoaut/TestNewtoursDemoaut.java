@@ -163,8 +163,8 @@ public class TestNewtoursDemoaut {
         $(By.name("billState")).setValue("NewMexico");
         $(By.name("billZip")).setValue("94089");
         $(By.name("billCountry")).selectOptionContainingText("UNITED STATES");
-        $(By.linkText("Same as Billing Address")).find("append").click();
-                Thread.sleep(5000);
+        //$(By.xpath(".//input[@name='ticketLess'"]))
+        Thread.sleep(5000);
 
     }
 
