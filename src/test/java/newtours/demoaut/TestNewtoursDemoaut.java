@@ -2,9 +2,7 @@ package newtours.demoaut;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selectors;
-import com.sun.corba.se.impl.orb.ParserTable;
 import org.junit.Assert;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
