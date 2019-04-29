@@ -26,7 +26,7 @@ public class TestNewtoursDemoaut {
     static int countPassangers = 2;
 
     @Test
-    public void test1() {
+    public void testNewtoursDemoaut_1() {
         openWebsite();
         login();
         flightFinder();
