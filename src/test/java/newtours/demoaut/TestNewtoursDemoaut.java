@@ -2,7 +2,9 @@ package newtours.demoaut;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selectors;
+import com.sun.corba.se.impl.orb.ParserTable;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
@@ -17,19 +19,37 @@ import com.codeborne.selenide.Condition;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 
+
 public class TestNewtoursDemoaut {
+    static String departingSum = null;
+    static String returningSum = null;
+    static int countPassangers = 2;
 
     @Test
-    public void composition() throws InterruptedException {
-
+    public void test1() {
+        openWebsite();
+        login();
         flightFinder();
-        selectFlight();
-        bookAflight();
+        flightFinder_FlightDetails();
+        flightFinder_Preferences();
+        SelectFlight();
+        selectFlight_Depart();
+        selectFlight_Return();
+        bookAflight_Summary();
+        bookAflight_Passengers();
+        bookAflight_CreditCard();
+        bookAflight_BillingAddress();
+        bookAflight_DeliveryAddress();
         flightConfirmation();
-
+        flightConfirmation_Departing();
+        flightConfirmation_Returning();
+        flightConfirmation_Passengers();
+        flightConfirmation_BilledTo();
+        flightConfirmation_DeliveryAddress();
+        flightConfirmation_TotalPrice();
     }
-    @Test
-    protected void test1Open() {
+
+    private void openWebsite() {
         Configuration.timeout = 1000;
         open("http://newtours.demoaut.com/");
         try {
@@ -38,15 +58,17 @@ public class TestNewtoursDemoaut {
         } catch (AWTException e) {
         }
     }
-    @Test
-    protected void test2Login() {
+
+    private void login() {
         $(By.name("userName")).setValue("tutorial");
         $(By.name("password")).setValue("tutorial").pressEnter();
     }
 
-    protected void flightFinder() {
-        Assert.assertTrue("Название не соответсвует «FLIGHT FINDER»", $(By.xpath(("//img[@src=\"/images/masts/mast_flightfinder.gif\"]"))).exists());
-//Блок Flight Details
+    private void flightFinder() {
+        Assert.assertTrue("Title is not match «FLIGHT FINDER»", $(By.xpath(("//img[@src=\"/images/masts/mast_flightfinder.gif\"]"))).exists());
+    }
+
+    private void flightFinder_FlightDetails() {
         $(By.name("tripType")).selectRadio("oneway");
         $(By.name("passCount")).selectOption(1);
         $(By.name("fromPort")).selectOption("Paris");
@@ -55,121 +77,142 @@ public class TestNewtoursDemoaut {
         $(By.name("toPort")).selectOption("Seattle");
         $(By.name("toMonth")).selectOption("December");
         $(By.name("toDay")).selectOption("19");
-//Блок Preferences
+    }
+
+    private void flightFinder_Preferences() {
         $(By.name("servClass")).selectRadio("Business");
         $(By.name("airline")).selectOption(3);
         $(By.name("findFlights")).click();
     }
 
+    private void SelectFlight() {
+        Assert.assertTrue("Title is not match expected «SELECT FLIGHT»", $(By.xpath("//img[@src=\"/images/masts/mast_selectflight.gif\"]")).exists());
+    }
 
-    protected void selectFlight() {
-        Assert.assertTrue("Название не соответсвует «SELECT FLIGHT»", $(By.xpath("//img[@src=\"/images/masts/mast_selectflight.gif\"]")).exists());
-//Блок DEPART
+    private void selectFlight_Depart() {
         try {
             $(By.tagName("tbody")).shouldHave(text("Paris to Seattle"));
         } catch (Error e) {
-            System.out.println("Текст в блоке «DEPART» не соответсвует тексту «Paris to Seattle»");
+            e.printStackTrace();
+            System.out.println("Text in block «DEPART» is not match expected «Paris to Seattle»");
         }
         try {
             $(By.tagName("tbody")).shouldHave(text("11/20/2015"));
         } catch (Error e) {
-            System.out.println("Дата в блоке «DEPART» не соответсвует дате «11/20/2015»");
+            e.printStackTrace();
+            System.out.println("Date in block «DEPART» is not match expected «11/20/2015»");
         }
-
         $(By.name("outFlight")).selectRadio("Unified Airlines$363$281$11:24");
-//Блок RETURN
+    }
+
+    private void selectFlight_Return() {
         try {
             $(By.tagName("tbody")).shouldHave(text("Seattle to Paris"));
         } catch (Error e) {
-            System.out.println("Текст в блоке «RETURN» не соответсвует тексту «Seattle to Paris»");
+            e.printStackTrace();
+            System.out.println("Text in block «RETURN» is not match expected «Seattle to Paris»");
         }
         try {
             $(By.tagName("tbody")).shouldHave(text("12/19/2015"));
         } catch (Error e) {
-            System.out.println("Дата в блоке «RETURN» не соответсвует дате «12/19/2015»");
+            e.printStackTrace();
+            System.out.println("Date in block «RETURN» is not match «12/19/2015»");
         }
-
         $(By.name("inFlight")).selectRadio("Blue Skies Airlines$631$273$14:30");
         $(By.name("reserveFlights")).click();
     }
 
-    protected void bookAflight() throws InterruptedException {
-//Блок Paris to Seattle
+    private void bookAflight_Summary() {
         try {
             $(By.className("frame_header_info")).shouldHave(text("Paris to Seattle"));
         } catch (Error e) {
-            System.out.println("Название не соответсвует ожидаемому «Paris to Seattle»");
+            e.printStackTrace();
+            System.out.println("Name does not match expected «Paris to Seattle»");
         }
         try {
             $(By.className("frame_header_info")).shouldHave(text("11/20/2015"));
         } catch (Error e) {
-            System.out.println("Дата рейса «Paris to Seattle» не соответсвует дате «11/20/2015»");
+            e.printStackTrace();
+            System.out.println("Date flight «Paris to Seattle» is not «11/20/2015»");
         }
         try {
             $(By.className("data_left")).shouldHave(text("Unified Airlines 363"));
         } catch (Error e) {
-            System.out.println("Название не соответсвует ожидаемому «Unified Airlines 363»");
+            e.printStackTrace();
+            System.out.println("Name does not match expected «Unified Airlines 363»");
         }
         try {
             $(By.className("data_center_mono")).shouldHave(text("Business"));
         } catch (Error e) {
-            System.out.println("Класс не соответсвует ожидаемому Business");
+            e.printStackTrace();
+            System.out.println("Class does not match expected «Business»");
         }
         try {
             $(By.className("data_center")).shouldHave(text("281"));
         } catch (Error e) {
-            System.out.println("Цена не соответсвует ожидаемой 281");
+            e.printStackTrace();
+            System.out.println("Price does not match expected «281»");
         }
-//Блок Seattle to Paris
         try {
             $(By.tagName("tbody")).shouldHave(text("Seattle to Paris"));
         } catch (Error e) {
-            System.out.println("Название не соответсвует ожидаемому «Seattle to Paris»");
+            e.printStackTrace();
+            System.out.println("Name does not match expected «Seattle to Paris»");
         }
         try {
             $(By.className("data_center_mono")).shouldHave(text("12/19/2015"));
         } catch (Error e) {
-            System.out.println("Дата рейса «Seattle to Paris» не соответсвует дате «12/19/2015»");
+            e.printStackTrace();
+            System.out.println("Date flight «Seattle to Paris» is not «12/19/2015»");
         }
         try {
             $(By.tagName("tbody")).shouldHave(text("Blue Skies Airlines 631"));
         } catch (Error e) {
-            System.out.println("Название не соответсвует ожидаемому «Blue Skies Airlines 631»");
+            e.printStackTrace();
+            System.out.println("Name does not match expected «Blue Skies Airlines 631»");
         }
         try {
             $(By.className("data_center_mono")).shouldHave(text("Business"));
         } catch (Error e) {
-            System.out.println("Класс не соответсвует ожидаемому Business");
+            e.printStackTrace();
+            System.out.println("Class does not match expected «Business»");
         }
         try {
             $(By.tagName("tbody")).shouldHave(text("273"));
         } catch (Error e) {
-            System.out.println("Цена не соответсвует ожидаемой 273");
+            e.printStackTrace();
+            System.out.println("Price does not match expected «273»");
         }
-
         try {
             $(By.tagName("tbody")).shouldHave(text("2"));
         } catch (Error e) {
-            System.out.println("Количество пассажиров не соответсвует ожидаемому - 2");
+            e.printStackTrace();
+            System.out.println("sum of passengers dose not 2");
         }
         try {
             $(By.tagName("tbody")).shouldHave(text("$91"));
         } catch (Error e) {
-            System.out.println("Стоиомть сборов не соответсвует $91");
+            e.printStackTrace();
+            System.out.println("Price taxes does not match expected «$91»");
         }
         try {
             $(By.tagName("tbody")).shouldHave(text("$1199"));
         } catch (Error e) {
-            System.out.println("Итого не соответсвует $1199");
+            e.printStackTrace();
+            System.out.println("Final sum dose not match expected $1199");
         }
-//Блок Passengers
+    }
+
+    private void bookAflight_Passengers() {
         $(By.name("passFirst0")).setValue("Ivanov");
         $(By.name("passLast0")).setValue("Ivan");
         $(By.name("pass.0.meal")).selectOption(3);
         $(By.name("passFirst1")).setValue("Ivanova");
         $(By.name("passLast1")).setValue("Irina");
         $(By.name("pass.1.meal")).selectOption(1);
-//Блок Credit Card
+    }
+
+    private void bookAflight_CreditCard() {
         $(By.name("creditCard")).selectOption(2);
         $(By.name("creditnumber")).setValue("5479540454132487");
         $(By.name("cc_exp_dt_mn")).selectOption(05);
@@ -177,13 +220,17 @@ public class TestNewtoursDemoaut {
         $(By.name("cc_frst_name")).setValue("Ivan");
         $(By.name("cc_mid_name")).setValue("Ivanovich");
         $(By.name("cc_last_name")).setValue("Ivanov");
-//Блок BillingAddress
+    }
+
+    private void bookAflight_BillingAddress() {
         $(By.name("billAddress1")).setValue("1085 BorregasAve.");
         $(By.name("billCity")).setValue("Albuquerque");
         $(By.name("billState")).setValue("NewMexico");
         $(By.name("billZip")).setValue("94089");
         $(By.name("billCountry")).selectOptionContainingText("UNITED STATES");
-//Блок DeliveryAddress
+    }
+
+    private void bookAflight_DeliveryAddress() {
         $$(By.name("ticketLess")).get(1).click();
         $(By.name("delAddress1")).setValue("1225 BorregasAve.");
         $(By.name("delCity")).setValue("Boston");
@@ -193,31 +240,28 @@ public class TestNewtoursDemoaut {
         $(By.name("buyFlights")).click();
     }
 
-    void flightConfirmation() throws InterruptedException {
-        String departingSum = null;
-        String returningSum = null;
-        String totalTaxes = null;
-        String totalSum = null;
+    private void flightConfirmation() {
+        Assert.assertTrue("Name dose not match expected «FLIGHT CONFIRMATION»", $(By.xpath("//img[@src=\"/images/masts/mast_confirmation.gif\"]")).exists());
+    }
 
-        Assert.assertTrue("Название не соответсвует «SELECT FLIGHT»", $(By.xpath("//img[@src=\"/images/masts/mast_confirmation.gif\"]")).exists());
-//Блок Departing
+    private void flightConfirmation_Departing() {
         try {
             $$(By.className("frame_header_info")).get(2).shouldHave(Condition.matchesText(".*Paris to Seattle.*"));
         } catch (Error e) {
             e.printStackTrace();
-            System.out.println("Информация в блоке Departing не соответствует ожидаемой «Paris to Seattle»");
+            System.out.println("Information in the Departing block does not match expected «Paris to Seattle»");
         }
         try {
             $$(By.className("frame_header_info")).get(2).shouldHave(Condition.matchesText(".*11/20/2015.*"));
         } catch (Error e) {
-            //      e.printStackTrace();
-            System.out.println("Информация в блоке Departing не соответствует ожидаемой «11/20/2015»");
+            e.printStackTrace();
+            System.out.println("Information in the Departing block does not match expected «11/20/2015»");
         }
         try {
             $$(By.className("frame_header_info")).get(2).shouldHave(Condition.matchesText(".*Unified Airlines 363.*"));
         } catch (Error e) {
             e.printStackTrace();
-            System.out.println("Информация в блоке Departing не соответствует ожидаемой «Unified Airlines 363»");
+            System.out.println("Information in the Departing block does not match expected «Unified Airlines 363»");
         }
         try {
             String text = $$(By.className("frame_header_info")).get(2).getText();
@@ -228,26 +272,28 @@ public class TestNewtoursDemoaut {
             }
         } catch (Error e) {
             e.printStackTrace();
-            System.out.println("Информация в блоке Departing не соответствует ожидаемой «Unified Airlines 363»");
+            System.out.println("Information in the Departing block does not match expected «Unified Airlines 363»");
         }
-//Блок Returning
+    }
+
+    private void flightConfirmation_Returning() {
         try {
             $$(By.className("frame_header_info")).get(4).shouldHave(Condition.matchesText(".*Seattle to Paris.*"));
         } catch (Error e) {
-            //  e.printStackTrace();
-            System.out.println("Информация в блоке Returning не соответствует ожидаемой «Seattle to Paris»");
+            e.printStackTrace();
+            System.out.println("Information in the Returning block does not match expected «Seattle to Paris»");
         }
         try {
             $$(By.className("frame_header_info")).get(4).shouldHave(Condition.matchesText(".*12/19/2015.*"));
         } catch (Error e) {
-            //    e.printStackTrace();
-            System.out.println("Информация в блоке Returning не соответствует ожидаемой «12/19/2015»");
+            e.printStackTrace();
+            System.out.println("Information in the Returning block does not match expected «12/19/2015»");
         }
         try {
             $$(By.className("frame_header_info")).get(4).shouldHave(Condition.matchesText(".*Blue Skies Airlines 631.*"));
         } catch (Error e) {
             e.printStackTrace();
-            System.out.println("Информация в блоке Returning не соответствует ожидаемой «Blue Skies Airlines 631»");
+            System.out.println("Information in the Returning block does not match expected «Blue Skies Airlines 631»");
         }
         try {
             String text = $$(By.className("frame_header_info")).get(4).getText();
@@ -258,60 +304,65 @@ public class TestNewtoursDemoaut {
             }
         } catch (Error e) {
             e.printStackTrace();
-            System.out.println("Информация в блоке Departing не соответствует ожидаемой «Unified Airlines 363»");
+            System.out.println("Information in the Departing block does not match expected «Unified Airlines 363»");
         }
-//Блок Passengers
-        int countPassangers = 2;
+    }
+
+    private void flightConfirmation_Passengers() {
         try {
             $$(By.className("data_left")).get(1).shouldHave(Condition.matchesText(".*" + countPassangers + " passengers.*"));
         } catch (Error e) {
             e.printStackTrace();
-            System.out.println("Информация в блоке Passengers не соответствует ожидаемой «2 passengers»");
+            System.out.println("Information in the Passengers block does not match expected «2 passengers»");
         }
-//Блок Billed To
+    }
+
+    private void flightConfirmation_BilledTo() {
         try {
             $$(By.tagName("tbody")).get(0).shouldHave(Condition.matchesText(".*Ivan Ivanovich Ivanov.*"));
         } catch (Error e) {
-            //e.printStackTrace();
-            System.out.println("Информация в блоке Billed To не соответствует ожидаемой «Ivan Ivanov Ivanovich»");
+            e.printStackTrace();
+            System.out.println("Information in the Billed To block does not match expected «Ivan Ivanov Ivanovich»");
         }
         try {
             $(By.tagName("tbody")).shouldHave(Condition.matchesText(".*1085 BorregasAve.*"));
         } catch (Error e) {
-            //e.printStackTrace();
-            System.out.println("Информация в блоке Billed To не соответствует ожидаемой «1085 BorregasAve»");
+            e.printStackTrace();
+            System.out.println("Information in the Billed To block does not match expected «1085 BorregasAve»");
         }
         try {
             $(By.tagName("tbody")).shouldHave(Condition.matchesText(".*Albuquerque, NewMexico, 94089.*"));
         } catch (Error e) {
-            //e.printStackTrace();
-            System.out.println("Информация в блоке Billed To не соответствует ожидаемой «Albuquerque, NewMexico, 94089»");
+            e.printStackTrace();
+            System.out.println("Information in the Billed To block does not match expected «Albuquerque, NewMexico, 94089»");
         }
         try {
             $(By.tagName("tbody")).shouldHave(Condition.matchesText(".*AX 0.*"));
         } catch (Error e) {
-            //e.printStackTrace();
-            System.out.println("Информация в блоке Billed To не соответствует ожидаемой «AX 0»");
+            e.printStackTrace();
+            System.out.println("Information in the Billed To block does not match expected «AX 0»");
         }
-//Блок Delivery Address
+    }
+
+    private void flightConfirmation_DeliveryAddress() {
         try {
             $(By.tagName("tbody")).shouldHave(Condition.matchesText(".*1225 BorregasAve.*"));
         } catch (Error e) {
-            //e.printStackTrace();
-            System.out.println("Информация в блоке Delivery Address не соответствует ожидаемой «1225 BorregasAve.»");
+            e.printStackTrace();
+            System.out.println("Information in the Delivery Address block does not match expected «1225 BorregasAve.»");
         }
         try {
             $(By.tagName("tbody")).shouldHave(Condition.matchesText(".*Boston, Massachusetts, 91089.*"));
         } catch (Error e) {
-            //e.printStackTrace();
-            System.out.println("Информация в блоке Delivery Address не соответствует ожидаемой «Boston, Massachusetts , 91089»");
+            e.printStackTrace();
+            System.out.println("Information in the Delivery Address block does not match expected «Boston, Massachusetts , 91089»");
         }
+    }
 
-//Блок Total Price (сравнение с суммой данных с FLIGHT CONFIRMATION)
+    private void flightConfirmation_TotalPrice() { //сравнение FLIGHT CONFIRMATION с суммой данных
+        String totalTaxes = null;
+        String totalSum = null;
         try {
-            //$(Selectors.byText(".*Total.*Taxes.*")).getText();
-            //$$(Selectors.byText("")).find(Condition.matchesText(".*Total.*"))
-            //.*Total Taxes\:\s*\$(\d*).*
             String text = $$(Selectors.byXpath(".//tr//td")).find(Condition.matchesText(".*Total.*")).getText();
             text = text.replaceAll("\n", " ");
             Matcher matcher = Pattern.compile(".*Total Taxes\\:\\s*\\$(\\d*).*").matcher(text);
@@ -319,8 +370,8 @@ public class TestNewtoursDemoaut {
                 totalTaxes = matcher.group(1);
             }
         } catch (Error e) {
-            //e.printStackTrace();
-            System.out.println("Информация в блоке Delivery Address не соответствует ожидаемой «Boston, Massachusetts , 91089»");
+            e.printStackTrace();
+            System.out.println("Information in the Delivery Address block does not match expected «Boston, Massachusetts , 91089»");
         }
         try {
             String text = $$(Selectors.byXpath(".//tr//td")).find(Condition.matchesText(".*Total.*")).getText();
@@ -330,13 +381,11 @@ public class TestNewtoursDemoaut {
                 totalSum = matcher.group(1);
             }
         } catch (Error e) {
-            //e.printStackTrace();
-            System.out.println("Информация в блоке Delivery Address не соответствует ожидаемой «Boston, Massachusetts , 91089»");
+            e.printStackTrace();
+            System.out.println("Information in the Delivery Address block does not match expected «Boston, Massachusetts , 91089»");
         }
-
-        System.out.println(" departingSum=" + departingSum + " returningSum=" + returningSum + " countPassangers="
-                + countPassangers + " totalTaxes=" + totalTaxes + " totalSum=" + totalSum + " ");
-
+//        System.out.println(" departingSum=" + departingSum + " returningSum=" + returningSum + " countPassangers="
+//                + countPassangers + " totalTaxes=" + totalTaxes + " totalSum=" + totalSum + " ");
         BigDecimal bdDepartingSum = new BigDecimal(departingSum);
         BigDecimal bdReturningSum = new BigDecimal(returningSum);
         BigDecimal bdCountPassangers = new BigDecimal(countPassangers);
@@ -345,7 +394,6 @@ public class TestNewtoursDemoaut {
         BigDecimal bdCountedTotalSum = bdDepartingSum.add(bdReturningSum).multiply(bdCountPassangers).add(bdTotalTaxes);
         Assert.assertEquals("Not equals total sum", bdCountedTotalSum, bdTotalSum);
         $(By.xpath("//a[@href=\"mercurywelcome.php\"]")).click();
-        Thread.sleep(2000);
     }
 }
 
