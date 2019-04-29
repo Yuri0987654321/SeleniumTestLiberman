@@ -384,8 +384,7 @@ public class TestNewtoursDemoaut {
             e.printStackTrace();
             System.out.println("Information in the Delivery Address block does not match expected «Boston, Massachusetts , 91089»");
         }
-//        System.out.println(" departingSum=" + departingSum + " returningSum=" + returningSum + " countPassangers="
-//                + countPassangers + " totalTaxes=" + totalTaxes + " totalSum=" + totalSum + " ");
+
         BigDecimal bdDepartingSum = new BigDecimal(departingSum);
         BigDecimal bdReturningSum = new BigDecimal(returningSum);
         BigDecimal bdCountPassangers = new BigDecimal(countPassangers);
