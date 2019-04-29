@@ -1,26 +1,19 @@
 package newtours.demoaut;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selectors;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.codeborne.selenide.Condition;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import sun.misc.Regexp;
 
-import static com.codeborne.selenide.Condition.name;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -28,41 +21,41 @@ public class TestNewtoursDemoaut {
 
     @Test
     public void composition() throws InterruptedException {
-        setUp();
-        open("http://newtours.demoaut.com/");
-        try {
-            Robot robot = new Robot();
-            robot.keyPress(KeyEvent.VK_F11);
-        } catch (AWTException e) {
-        }
 
-        login();
         flightFinder();
         selectFlight();
         bookAflight();
         flightConfirmation();
 
     }
-
-    public void setUp() {
+    @Test
+    protected void test1Open() {
         Configuration.timeout = 1000;
+        open("http://newtours.demoaut.com/");
+        try {
+            Robot robot = new Robot();
+            robot.keyPress(KeyEvent.VK_F11);
+        } catch (AWTException e) {
+        }
     }
-
-    protected void login() {
+    @Test
+    protected void test2Login() {
         $(By.name("userName")).setValue("tutorial");
         $(By.name("password")).setValue("tutorial").pressEnter();
     }
 
     protected void flightFinder() {
         Assert.assertTrue("Название не соответсвует «FLIGHT FINDER»", $(By.xpath(("//img[@src=\"/images/masts/mast_flightfinder.gif\"]"))).exists());
+//Блок Flight Details
         $(By.name("tripType")).selectRadio("oneway");
         $(By.name("passCount")).selectOption(1);
-        $(By.name("fromPort")).selectOption(4);
-        $(By.name("fromMonth")).selectOption(10);
-        $(By.name("fromDay")).selectOption(19);
-        $(By.name("toPort")).selectOption(7);
-        $(By.name("toMonth")).selectOption(11);
-        $(By.name("toDay")).selectOption(18);
+        $(By.name("fromPort")).selectOption("Paris");
+        $(By.name("fromMonth")).selectOption("November");
+        $(By.name("fromDay")).selectOption("20");
+        $(By.name("toPort")).selectOption("Seattle");
+        $(By.name("toMonth")).selectOption("December");
+        $(By.name("toDay")).selectOption("19");
+//Блок Preferences
         $(By.name("servClass")).selectRadio("Business");
         $(By.name("airline")).selectOption(3);
         $(By.name("findFlights")).click();
@@ -71,6 +64,7 @@ public class TestNewtoursDemoaut {
 
     protected void selectFlight() {
         Assert.assertTrue("Название не соответсвует «SELECT FLIGHT»", $(By.xpath("//img[@src=\"/images/masts/mast_selectflight.gif\"]")).exists());
+//Блок DEPART
         try {
             $(By.tagName("tbody")).shouldHave(text("Paris to Seattle"));
         } catch (Error e) {
@@ -83,7 +77,7 @@ public class TestNewtoursDemoaut {
         }
 
         $(By.name("outFlight")).selectRadio("Unified Airlines$363$281$11:24");
-
+//Блок RETURN
         try {
             $(By.tagName("tbody")).shouldHave(text("Seattle to Paris"));
         } catch (Error e) {
@@ -199,7 +193,7 @@ public class TestNewtoursDemoaut {
         $(By.name("buyFlights")).click();
     }
 
-    void flightConfirmation() {
+    void flightConfirmation() throws InterruptedException {
         String departingSum = null;
         String returningSum = null;
         String totalTaxes = null;
@@ -329,9 +323,6 @@ public class TestNewtoursDemoaut {
             System.out.println("Информация в блоке Delivery Address не соответствует ожидаемой «Boston, Massachusetts , 91089»");
         }
         try {
-            //$(Selectors.byText(".*Total.*Taxes.*")).getText();
-            //$$(Selectors.byText("")).find(Condition.matchesText(".*Total.*"))
-            //.*Total Taxes\:\s*\$(\d*).*
             String text = $$(Selectors.byXpath(".//tr//td")).find(Condition.matchesText(".*Total.*")).getText();
             text = text.replaceAll("\n", " ");
             Matcher matcher = Pattern.compile(".*Total Price \\(including taxes\\)\\:\\s*\\$(\\d*).*").matcher(text);
@@ -354,6 +345,7 @@ public class TestNewtoursDemoaut {
         BigDecimal bdCountedTotalSum = bdDepartingSum.add(bdReturningSum).multiply(bdCountPassangers).add(bdTotalTaxes);
         Assert.assertEquals("Not equals total sum", bdCountedTotalSum, bdTotalSum);
         $(By.xpath("//a[@href=\"mercurywelcome.php\"]")).click();
+        Thread.sleep(2000);
     }
 }
 
