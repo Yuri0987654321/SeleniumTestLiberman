@@ -19,9 +19,9 @@ import static com.codeborne.selenide.Selenide.*;
 
 
 public class TestNewtoursDemoaut {
-    static String departingSum = null;
-    static String returningSum = null;
-    static int countPassangers = 2;
+    private String departingSum = null;
+    private String returningSum = null;
+    private final static int countPassangers = 2;
 
     @Test
     public void testNewtoursDemoaut_1() {
